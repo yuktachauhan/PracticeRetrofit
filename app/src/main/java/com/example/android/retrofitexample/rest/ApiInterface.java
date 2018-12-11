@@ -17,8 +17,8 @@ public interface ApiInterface {
     Call<ModelSignUp> Register(@Body ModelSignUp modelResponse) ;
 
     @POST("auth/login/")
-    Call<ModelLogin> Login(@Body ModelLogin modelLogin);
+    Call<ModelToken> Login(@Body ModelLogin modelLogin);
 
-    /*@GET("auth/verify/")
-    Call<ResponseBody> getToken(@Header("Authorization") String token);*/
+    @GET("user/classroom")
+    Call<ResponseBody> Token(@Header("Authorization") String token);
 }

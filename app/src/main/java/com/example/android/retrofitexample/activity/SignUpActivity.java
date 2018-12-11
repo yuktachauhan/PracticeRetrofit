@@ -3,6 +3,7 @@ package com.example.android.retrofitexample.activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -72,8 +73,13 @@ public class SignUpActivity extends AppCompatActivity {
         call.enqueue(new Callback<ModelSignUp>() {
             @Override
             public void onResponse(Call<ModelSignUp> call, Response<ModelSignUp> response) {
-                Toast.makeText(SignUpActivity.this,"Registration Successfull",Toast.LENGTH_LONG).show();
                 Log.i("SignUpActivity","onResponse is called");
+                if(response.code()==400) {
+                    Toast.makeText(SignUpActivity.this, "email or username  already exists.", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(SignUpActivity.this,"Registration is successfull",Toast.LENGTH_SHORT).show();
+                }
+
             }
 
             @Override

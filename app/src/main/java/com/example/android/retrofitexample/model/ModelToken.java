@@ -7,11 +7,11 @@ public class ModelToken {
     private String username;
 
     @SerializedName("token")
-    private String token;
+    private String Token;
 
-    public ModelToken(String username,String token){
-        this.username=username;
-        this.token=token;
+    public ModelToken(String user,String token){
+        this.username=user;
+        this.Token=token;
     }
 
     public String getUsername(){
@@ -19,6 +19,6 @@ public class ModelToken {
     }
 
     public String getToken(){
-        return token;
+        return Token;
     }
 }
