@@ -1,5 +1,6 @@
 package com.example.android.retrofitexample.rest;
 
+import com.example.android.retrofitexample.model.ModelForgetPassword;
 import com.example.android.retrofitexample.model.ModelLogin;
 import com.example.android.retrofitexample.model.ModelSignUp;
 import com.example.android.retrofitexample.model.ModelToken;
@@ -21,4 +22,8 @@ public interface ApiInterface {
 
     @GET("user/classroom")
     Call<ResponseBody> Token(@Header("Authorization") String token);
+
+    @POST("auth/password/forget")
+    Call<ModelForgetPassword> forgetPassword(@Body ModelForgetPassword modelForgetPassword);
+
 }

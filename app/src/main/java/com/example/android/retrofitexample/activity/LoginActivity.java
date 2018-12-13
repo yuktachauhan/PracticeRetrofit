@@ -1,14 +1,13 @@
 package com.example.android.retrofitexample.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.retrofitexample.R;
@@ -36,9 +35,26 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void UserLogin(){
+        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
+        progressDialog.setMessage("Logging in...");
+        progressDialog.show();
 
         String user=username.getText().toString().trim();
         String pwd=password.getText().toString().trim();
+
+        if(user.isEmpty()){
+            progressDialog.dismiss();
+            username.setError("Enter your valid username");
+            username.requestFocus();
+            return;
+        }
+
+        if(pwd.isEmpty() || pwd.length()<8){
+            progressDialog.dismiss();
+            password.setError("Enter your password");
+            password.requestFocus();
+            return;
+        }
 
         ApiInterface apiInterface= ApiClient.ApiClient().create(ApiInterface.class);
         ModelLogin modelLogin =new ModelLogin(user,pwd);
@@ -47,8 +63,9 @@ public class LoginActivity extends AppCompatActivity {
         call.enqueue(new Callback<ModelToken>() {
             @Override
             public void onResponse(Call<ModelToken> call, Response<ModelToken> response) {
+                progressDialog.dismiss();
                 if (response.code()==200) {
-                    Toast.makeText(LoginActivity.this,response.body().getToken(), Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(LoginActivity.this,MainActivity.class));
                     SharedPreferences myPref=getApplicationContext().getSharedPreferences("mypref",0);  //0 means private mode
                     SharedPreferences.Editor editor=myPref.edit();
                     editor.putString("token",response.body().getToken()).commit();
@@ -62,14 +79,20 @@ public class LoginActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<ModelToken> call, Throwable t) {
+                progressDialog.dismiss();
                 Log.i("LoginActivity","onFailure is called");
-                Toast.makeText(LoginActivity.this,t.getMessage(),Toast.LENGTH_LONG);
+                Toast.makeText(LoginActivity.this,t.getMessage(),Toast.LENGTH_LONG).show();
             }
         });
     }
 
     public void loggedIn(View v){
         UserLogin();
+    }
+
+    public void forgetPassword(View v){
+       Intent intent = new Intent(LoginActivity.this,ForgetPasswordActivity.class);
+       startActivity(intent);
     }
 
     public void SignedUp(View v){
