@@ -16,6 +16,9 @@ import com.example.android.retrofitexample.model.ModelToken;
 import com.example.android.retrofitexample.rest.ApiClient;
 import com.example.android.retrofitexample.rest.ApiInterface;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,12 +52,12 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        if(pwd.isEmpty() || pwd.length()<8){
+       /* if(pwd.isEmpty() || pwd.length()<8){
             progressDialog.dismiss();
             password.setError("Enter your password");
             password.requestFocus();
             return;
-        }
+        }*/
 
         ApiInterface apiInterface= ApiClient.ApiClient().create(ApiInterface.class);
         ModelLogin modelLogin =new ModelLogin(user,pwd);
@@ -64,16 +67,16 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ModelToken> call, Response<ModelToken> response) {
                 progressDialog.dismiss();
-                if (response.code()==200) {
-                    startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                if (response.isSuccessful()) {
                     SharedPreferences myPref=getApplicationContext().getSharedPreferences("mypref",0);  //0 means private mode
                     SharedPreferences.Editor editor=myPref.edit();
                     editor.putString("token",response.body().getToken()).commit();
                     token= myPref.getString("token",response.body().getToken());
                     Log.i("MY STORED TOKEN IS =",token);
+                    getTheToken();
 
                 } else if(response.code()==400){
-                    Toast.makeText(LoginActivity.this, "Please Verify your confirmation Email", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "Please Verify your confirmation Email", Toast.LENGTH_SHORT).show();
                 }
                 Log.i("LoginActivity", "onResponse is called");
             }
@@ -85,6 +88,32 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void getTheToken(){
+        ApiInterface apiInterface= ApiClient.ApiClient().create(ApiInterface.class);
+        Call<ResponseBody> call = apiInterface.Token("JWT"+" "+token);
+        Log.i("getTheToken Method","JWT"+" "+token);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                startActivity(new Intent(LoginActivity.this,MainActivity.class));}
+                else {
+                    try {
+                        Toast.makeText(LoginActivity.this,response.body().string(),Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(LoginActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        }
 
     public void loggedIn(View v){
         UserLogin();

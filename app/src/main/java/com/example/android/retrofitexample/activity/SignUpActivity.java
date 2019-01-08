@@ -106,7 +106,7 @@ public class SignUpActivity extends AppCompatActivity {
                 if(response.isSuccessful()) {
                     startActivity(new Intent(SignUpActivity.this,MainActivity.class));
                 }else if(response.code()==400){
-                    Toast.makeText(SignUpActivity.this, "email or username  already exists.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignUpActivity.this, "email or username  already exists.", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -114,7 +114,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ModelSignUp> call, Throwable t) {
                 progressDialog.dismiss();
-                Toast.makeText(SignUpActivity.this,t.getMessage(),Toast.LENGTH_LONG).show();
+                Toast.makeText(SignUpActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
                 Log.i("SignUpActivity","onFailure is called");
             }
         });
